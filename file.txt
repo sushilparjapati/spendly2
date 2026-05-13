@@ -55,7 +55,7 @@ Requirements:
 
 - Clicking "See how it works" opens a modal overlay
 - Modal contains an embedded YouTube video (use any placeholder YouTube URL
-for now, I will replace it later)
+for now)
 - Video should be playable inside the modal
 - Clicking the close button OR clicking outside the modal closes it
 - When the modal closes, the video must stop playing (not continue in background)
