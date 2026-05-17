@@ -15,12 +15,12 @@ expense-tracker 2/
 ├── spendly.db          # SQLite database — gitignored, created by init_db()
 ├── database/
 │   ├── __init__.py     # Empty — marks `database/` as a Python package
-│   └── db.py           # SQLite helpers: get_db(), init_db(), seed_db()
+│   └── db.py           # SQLite helpers: get_db(), init_db(), seed_db(), create_user(), get_user_by_email()
 ├── templates/
 │   ├── base.html       # Shared layout — all pages extend this
 │   ├── landing.html    # Marketing page — hero, features, CTA, "See how it works" video modal
-│   ├── login.html      # Sign-in form (POST /login — handler not yet implemented)
-│   ├── register.html   # Account creation form (POST /register — handler not yet implemented)
+│   ├── login.html      # Sign-in form (POST /login — implemented in Step 3)
+│   ├── register.html   # Account creation form (POST /register — implemented in Step 2)
 │   ├── terms.html      # Static Terms and Conditions page
 │   └── privacy.html    # Static Privacy Policy page
 ├── static/
@@ -34,9 +34,13 @@ expense-tracker 2/
 │   │   ├── seed-expense.md  # /seed-expense — seeds realistic dummy expenses for a user
 │   │   └── seed-user.md     # /seed-user — creates a single dummy user in the database
 │   ├── specs/
-│   │   └── 01-database-setup.md  # Spec for Step 1 (database setup)
+│   │   ├── 01-database-setup.md  # Spec for Step 1 (database setup)
+│   │   ├── 02-registration.md    # Spec for Step 2 (registration)
+│   │   └── 03-login-and-logout.md  # Spec for Step 3 (login and logout)
 │   └── plans/
-│       └── 01-database-setup.md  # Implementation plan for Step 1
+│       ├── 01-database-setup.md  # Implementation plan for Step 1
+│       ├── 02-registration.md    # Implementation plan for Step 2
+│       └── 03-login-and-logout.md  # Implementation plan for Step 3
 ├── file.txt            # Assignment prompt log — spec/history reference, not code
 ├── pyproject.toml      # uv-managed dependencies
 ├── requirements.txt    # Pinned pip alternative for non-uv installs
@@ -103,10 +107,12 @@ On startup, `app.py` auto-calls `init_db()` and `seed_db()` inside an `app.app_c
 | ----------------------------- | ---------------------------------------- |
 | `GET /`                     | Implemented — renders `landing.html`  |
 | `GET /register`             | Implemented — renders `register.html` |
+| `POST /register`            | Implemented — creates account, redirects to login |
 | `GET /login`                | Implemented — renders `login.html`    |
+| `POST /login`               | Implemented — authenticates user, sets session    |
 | `GET /terms`                | Implemented — renders `terms.html`    |
 | `GET /privacy`              | Implemented — renders `privacy.html`  |
-| `GET /logout`               | Stub — Step 3                           |
+| `GET /logout`               | Implemented — clears session, redirects to landing |
 | `GET /profile`              | Stub — Step 4                           |
 | `GET /expenses/add`         | Stub — Step 7                           |
 | `GET /expenses/<id>/edit`   | Stub — Step 8                           |
@@ -123,6 +129,6 @@ On startup, `app.py` auto-calls `init_db()` and `seed_db()` inside an `app.app_c
 - **Never put DB logic in route functions** — it belongs in `database/db.py`
 - **Never install new packages** mid-feature without flagging it — keep `requirements.txt` in sync
 - **Never use JS frameworks** — the frontend is intentionally vanilla
-- **database/db.py is implemented** — get_db(),  init_db(), seed_db() are ready to use; import from  `database.db``
+- **database/db.py is implemented** — get_db(), init_db(), seed_db(), create_user(), get_user_by_email() are ready to use; import from `database.db`
 - **FK enforcement is manual** — SQLite foreign keys are off by default; `get_db()` must run `PRAGMA foreign_keys = ON` on every connection
 - The app runs on **port 5001**, not the Flask default 5000 — don't change this
